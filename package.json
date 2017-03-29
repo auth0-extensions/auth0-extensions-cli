@@ -1,9 +1,13 @@
 {
   "name": "auth0-extensions-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command-line tool allowing you to build a Node.js backend as an Auth0 Extension",
   "engines": {
     "node": "^6.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/auth0-extensions/auth0-extensions-cli"
   },
   "bin": {
     "a0-ext": "./bin/a0-ext"
