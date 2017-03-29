@@ -12,8 +12,8 @@ In order to compile your Node.js backend into an Auth0 Extension you can add a s
 
 ```json
 {
+  "name": "my-extension",
   ...
-  "name": "my-extension",,
   "scripts": {
     "extension:build": "a0-ext build:server ./webtask.js ./dist",
     ...
@@ -29,8 +29,8 @@ You can add an `auth0-extension` node to your `package.json` file to specify spe
 
 ```json
 {
+  "name": "my-extension",
   ...
-  "name": "my-extension",,
   "scripts": {
     "extension:build": "a0-ext build:server ./webtask.js ./dist",
     ...
