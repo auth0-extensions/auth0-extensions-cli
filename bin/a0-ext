@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+const _ = require('lodash');
+const path = require('path');
+const chalk = require('chalk');
+const Webpack = require('webpack');
+const json = require('load-json-file');
+
+const getConfig = require('../lib/config');
+const getExternals = require('../lib/externals');
+
+const prog = require('caporal');
+prog
+  .version('1.0.0')
+  .command('build:server', 'Compile your Node.js Backend into an Auth0 Extension')
+  .argument('entryPoint', 'Entry point for your extension')
+  .argument('destinationFolder', 'Folder where to store the output of the build')
+  .action((args) => {
+    const rootPath = process.cwd();
+    Promise.all([json(path.join(rootPath, 'package.json')), json(path.join(rootPath, 'webtask.json'))])
+      .then((files) => {
+        const pkg = files[0];
+        const webtaskJson = files[1];
+
+        console.log('Building:', chalk.bold(`${pkg.name}@${pkg.version}`));
+
+        getExternals(rootPath)
+          .then(externals => getConfig(pkg, webtaskJson, rootPath, args, externals))
+          .then((config) => {
+            Webpack(config, (err, stats) => {
+              if (err) {
+                console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
+              } else {
+                const chunks = stats.toJson('verbose').chunks;
+                console.log('Output:', chalk.bold(`${path.join(args.destinationFolder, chunks[0].files[0])}`));
+
+                const largeModules = _.chain(chunks[0].modules)
+                  .orderBy(['size'], ['desc'])
+                  .filter(m => m.size > 5000)
+                  .value();
+                if (largeModules && largeModules.length) {
+                  largeModules.forEach(m => console.log(` - ${m.name} (${Math.round(m.size / 1024)} KB)`));
+                }
+
+                console.log('\n');
+                console.log(stats.toString({
+                  colors: true,
+                  cached: false,
+                  cachedModules: false
+                }));
+              }
+            });
+          });
+      });
+  });
+prog.parse(process.argv);
