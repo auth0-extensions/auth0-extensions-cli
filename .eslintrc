@@ -3,6 +3,7 @@
     "auth0-base"
   ],
   "env": {
-    "node": true
+    "node": true,
+    "mocha": true
   }
 }

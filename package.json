@@ -12,9 +12,12 @@
   "bin": {
     "a0-ext": "./bin/a0-ext"
   },
+  "scripts": {
+    "test": "mocha"
+  },
   "dependencies": {
-    "@babel/core": "7.0.0-beta.44",
-    "@babel/preset-env": "7.0.0-beta.44",
+    "@babel/core": "^7.0.0-beta.44",
+    "@babel/preset-env": "^7.0.0-beta.44",
     "async": "^2.2.0",
     "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -34,8 +37,10 @@
     "webpack": "^4.4.1"
   },
   "devDependencies": {
+    "chai": "4.1.2",
     "eslint": "^4.19.1",
     "eslint-config-auth0-base": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "5.0.5"
   }
 }
