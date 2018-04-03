@@ -13,7 +13,7 @@
     "a0-ext": "./bin/a0-ext"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.44",
