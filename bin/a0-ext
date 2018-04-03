@@ -27,13 +27,11 @@ prog
         getExternals(rootPath)
           .then(externals => getConfig(pkg, webtaskJson, rootPath, args, externals))
           .then((config) => {
-            console.log(config)
             Webpack(config).run((err, stats) => {
               if (err) {
                 console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
               } else {
                 const chunks = stats.toJson({ chunks: true }).chunks;
-                console.log(stats.toJson('verbose'));
                 console.log('Output:', chalk.bold(`${path.join(args.destinationFolder, chunks[0].files[0])}`));
 
                 const largeModules = _.chain(chunks[0].modules)
