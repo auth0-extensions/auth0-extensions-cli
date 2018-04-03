@@ -33,6 +33,7 @@
     "lodash": "^4.17.4",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
+    "semver": "5.5.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "webpack": "^4.4.1"
   },

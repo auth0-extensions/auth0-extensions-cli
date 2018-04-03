@@ -158,4 +158,35 @@ describe('config', () => {
       })
     );
   });
+
+  describe('nodeTarget', () => {
+    [
+      { target: '8.9.0', expectedEcma: 8 },
+      { target: '^8', expectedEcma: 8, expectedTarget: '8.0.0' },
+      { target: '8.11.1', expectedEcma: 8 },
+      { target: '4.2.0', expectedEcma: 6 },
+      { target: '4.9.1', expectedEcma: 6 },
+      { target: 'notSemVer', expectedEcma: 6, expectedTarget: '4.2.0' },
+      { target: '4', expectedEcma: 6, expectedTarget: '4.0.0' }
+    ].map(test =>
+      describe(`${test.target}`, () => {
+        const targetPackage = Object.assign({}, pkg, {
+          'auth0-extension': { nodeTarget: test.target }
+        });
+
+        it('properly configures babel', () => {
+          const result = config(targetPackage, webtaskJson, rootPath, args, externals);
+          const babelTarget = result.module.rules[0].use.options.presets[0][1].targets;
+
+          const expected = test.expectedTarget || test.target;
+          expect(babelTarget).to.eql({ node: expected });
+        });
+
+        it('properly configures uglify', () => {
+          const result = config(targetPackage, webtaskJson, rootPath, args, externals);
+          expect(result.plugins[0].options.uglifyOptions.ecma).to.eql(test.expectedEcma);
+        });
+      })
+    );
+  });
 });
