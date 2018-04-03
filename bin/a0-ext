@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 const _ = require('lodash');
-const path = require('path');
 const chalk = require('chalk');
-const Webpack = require('webpack');
 const json = require('load-json-file');
+const path = require('path');
+const prog = require('caporal');
+const Webpack = require('webpack');
 
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 
-const prog = require('caporal');
 prog
   .version('1.0.0')
   .command('build:server', 'Compile your Node.js Backend into an Auth0 Extension')
@@ -27,6 +27,7 @@ prog
         getExternals(rootPath)
           .then(externals => getConfig(pkg, webtaskJson, rootPath, args, externals))
           .then((config) => {
+            console.log(config)
             Webpack(config).run((err, stats) => {
               if (err) {
                 console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
