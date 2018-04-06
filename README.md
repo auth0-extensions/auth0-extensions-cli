@@ -58,6 +58,7 @@ You can add an `auth0-extension` node to your `package.json` file to specify spe
     ],
     "nodeTarget": "8.9.0",
     "bundleModules": false,
+    "useBabel": true,
     "settings": {
       "WARN_DB_SIZE": 409600,
       "MAX_MULTISELECT_USERS": 5,

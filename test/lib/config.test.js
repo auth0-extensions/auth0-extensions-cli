@@ -40,6 +40,13 @@ const defaultWebpackConfig = {
                 }
               }
             ]
+          ],
+          plugins: [
+            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-proposal-export-default-from',
+            '@babel/plugin-proposal-export-namespace-from',
+            '@babel/plugin-transform-runtime',
+            '@babel/plugin-syntax-dynamic-import'
           ]
         }
       }
@@ -188,5 +195,29 @@ describe('config', () => {
         });
       })
     );
+  });
+
+  describe('useBabel', () => {
+    [
+      { useBabel: false, expected: false },
+      { useBabel: undefined, expected: true },
+      { useBabel: true, expected: true }
+    ].map((test) => {
+      describe(`when set to ${test.useBabel}`, () => {
+        const targetPackage = Object.assign({}, pkg, {
+          'auth0-extension': { useBabel: test.useBabel }
+        });
+        it(`${test.expected ? 'does' : 'does not'} load babel`, () => {
+          const result = config(targetPackage, webtaskJson, rootPath, args, externals);
+          const rules = result.module.rules;
+
+          if (test.expected) {
+            expect(rules).to.not.be.empty;
+          } else {
+            expect(rules).to.be.empty;
+          }
+        });
+      });
+    });
   });
 });
