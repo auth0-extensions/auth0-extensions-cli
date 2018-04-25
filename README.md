@@ -56,6 +56,9 @@ You can add an `auth0-extension` node to your `package.json` file to specify spe
       "webtask-tools",
       "winston@1.0.0"
     ],
+    "nodeTarget": "8.9.0",
+    "bundleModules": false,
+    "useBabel": true,
     "settings": {
       "WARN_DB_SIZE": 409600,
       "MAX_MULTISELECT_USERS": 5,
