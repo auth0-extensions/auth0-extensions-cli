@@ -41,6 +41,7 @@ const defaultWebpackConfig = {
               }
             ]
           ],
+          babelrc: false,
           plugins: [
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-export-default-from',
@@ -111,6 +112,10 @@ describe('config', () => {
 
       expect(result.plugins[0].options.warningsFilter).to.be.a('function');
       delete result.plugins[0].options.warningsFilter;
+
+      expect(result.plugins[0].sourceMapsCache).to.be.a('WeakMap');
+      delete result.plugins[0].sourceMapsCache;
+
       expect(result).to.eql(defaultWebpackConfig);
     });
   });
