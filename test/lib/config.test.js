@@ -113,9 +113,6 @@ describe('config', () => {
       expect(result.plugins[0].options.warningsFilter).to.be.a('function');
       delete result.plugins[0].options.warningsFilter;
 
-      expect(result.plugins[0].sourceMapsCache).to.be.a('WeakMap');
-      delete result.plugins[0].sourceMapsCache;
-
       expect(result).to.eql(defaultWebpackConfig);
     });
   });
