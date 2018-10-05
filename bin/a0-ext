@@ -6,14 +6,17 @@ const json = require('load-json-file');
 const path = require('path');
 const prog = require('caporal');
 const Webpack = require('webpack');
+const WebtaskJSONValidator = require('webtask-json-validator');
 
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 const getClientConfig = require('../lib/client-config');
-const devServer = require('../lib/dev-server');
+const pkg = require('../package.json');
+
+require('../lib/dev-server');
 
 prog
-  .version('1.0.0')
+  .version(pkg.version)
   .command('build:server', 'Compile your Node.js Backend into an Auth0 Extension')
   .argument('entryPoint', 'Entry point for your extension')
   .argument('destinationFolder', 'Folder where to store the output of the build')
@@ -21,38 +24,51 @@ prog
     const rootPath = process.cwd();
     Promise.all([json(path.join(rootPath, 'package.json')), json(path.join(rootPath, 'webtask.json'))])
       .then((files) => {
-        const pkg = files[0];
+        const packageJson = files[0];
         const webtaskJson = files[1];
 
-        console.log('Building:', chalk.bold(`${pkg.name}@${pkg.version} extension`));
+        console.log('Testing webtask.json:', chalk.bold(`${webtaskJson.name}@${webtaskJson.version}`));
+        const result = WebtaskJSONValidator.validate(webtaskJson);
+        if (!result.isValid) {
+          let msg = `Invalid: ${result.message}. `;
+          if (result.value) msg += result.value;
+          throw new Error(msg);
+        }
 
-        getExternals(rootPath)
-          .then(externals => getConfig(pkg, webtaskJson, rootPath, args, externals))
+        if (webtaskJson.version !== packageJson.version) {
+          throw new Error(`Mismatched versions: webtask.json@${webtaskJson.version} vs package.json@${packageJson.version}`);
+        }
+
+        console.log('Building:', chalk.bold(`${packageJson.name}@${packageJson.version}`));
+
+        return getExternals(rootPath)
+          .then(externals => getConfig(packageJson, webtaskJson, rootPath, args, externals))
           .then((config) => {
             Webpack(config).run((err, stats) => {
-              if (err) {
-                console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
-              } else {
-                const chunks = stats.toJson({ chunks: true }).chunks;
-                console.log('Output:', chalk.bold(`${path.join(args.destinationFolder, chunks[0].files[0])}`));
+              if (err) throw err;
 
-                const largeModules = _.chain(chunks[0].modules)
-                  .orderBy(['size'], ['desc'])
-                  .filter(m => m.size > 5000)
-                  .value();
-                if (largeModules && largeModules.length) {
-                  largeModules.forEach(m => console.log(` - ${m.name} (${Math.round(m.size / 1024)} KB)`));
-                }
+              const chunks = stats.toJson({ chunks: true }).chunks;
+              console.log('Output:', chalk.bold(`${path.join(args.destinationFolder, chunks[0].files[0])}`));
 
-                console.log('\n');
-                console.log(stats.toString({
-                  colors: true,
-                  cached: false,
-                  cachedModules: false
-                }));
+              const largeModules = _.chain(chunks[0].modules)
+                .orderBy(['size'], ['desc'])
+                .filter(m => m.size > 5000)
+                .value();
+              if (largeModules && largeModules.length) {
+                largeModules.forEach(m => console.log(` - ${m.name} (${Math.round(m.size / 1024)} KB)`));
               }
+
+              console.log('\n');
+              console.log(stats.toString({
+                colors: true,
+                cached: false,
+                cachedModules: false
+              }));
             });
           });
+      })
+      .catch((err) => {
+        console.log(chalk.bold(err));
       });
   })
   .command('build:client', 'Compile your React Frontend into an Auth0 Extension Client')
