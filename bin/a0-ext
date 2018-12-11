@@ -10,6 +10,7 @@ const Webpack = require('webpack');
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 const getClientConfig = require('../lib/client-config');
+const devServer = require('../lib/dev-server');
 
 prog
   .version('1.0.0')
@@ -66,23 +67,17 @@ prog
       .then((pkg) => {
         console.log('Building:', chalk.bold(`${pkg.name}@${pkg.version} client`));
 
-        getClientConfig(pkg, rootPath, mode, entry, destination)
-          .then((config) => {
-            Webpack(config).run((err, stats) => {
-              if (err) {
-                console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
-              } else {
-                const chunks = stats.toJson({ chunks: true }).chunks;
-                console.log('Output:', chalk.bold(`${path.join(args.destinationFolder, chunks[0].files[0])}`));
-                console.log('\n');
-                console.log(stats.toString({
-                  colors: true,
-                  cached: false,
-                  cachedModules: false
-                }));
-              }
-            });
-          });
+        Webpack(getClientConfig(pkg, rootPath, mode, entry, destination)).run((err, stats) => {
+          if (err) {
+            console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
+          } else {
+            console.log(stats.toString({
+              colors: true,
+              cached: false,
+              cachedModules: false
+            }));
+          }
+        });
       });
   });
 
