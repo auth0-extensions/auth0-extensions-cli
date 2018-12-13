@@ -9,6 +9,7 @@
     "type": "git",
     "url": "git://github.com/auth0-extensions/auth0-extensions-cli"
   },
+  "main": "index.js",
   "bin": {
     "a0-ext": "./bin/a0-ext"
   },
@@ -40,6 +41,7 @@
     "mini-css-extract-plugin": "^0.5.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
+    "postcss-loader": "^3.0.0",
     "semver": "5.5.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "webpack": "^4.5.0",
