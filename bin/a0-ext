@@ -6,11 +6,12 @@ const json = require('load-json-file');
 const path = require('path');
 const prog = require('caporal');
 const Webpack = require('webpack');
+const validator = require('webtask-json-validator');
+
 
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 const getClientConfig = require('../lib/client-config');
-const devServer = require('../lib/dev-server');
 
 prog
   .version('1.0.0')
@@ -78,6 +79,28 @@ prog
             }));
           }
         });
+      });
+  })
+  .command('validate', 'Check extension`s package.json to contain all necessary information')
+  .argument('entryPoint', 'Entry point for your extension')
+  .action((args) => {
+    const rootPath = process.cwd();
+    const entry = args.entryPoint || 'package.json';
+    const packagePath = path.join(rootPath, entry);
+
+    json(packagePath)
+      .then((pkg) => {
+        console.log(`Validating ${packagePath}`);
+
+        const result = validator.validate(pkg, true);
+
+        if (result.isValid) {
+          console.log(`${packagePath} is valid.`);
+          return process.exit(0);
+        }
+
+        console.log(`${packagePath} is invalid.`, result.errors);
+        return process.exit((result.errors && result.errors.length) || 1);
       });
   });
 
