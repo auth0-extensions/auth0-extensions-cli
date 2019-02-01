@@ -121,7 +121,7 @@ prog
 
         const clientPath = opts.client ? path.join(rootPath, opts.client) : null;
         const bundlePath = path.join(rootPath, opts.bundle || `./dist/${pkg.name}.extension.${pkg.version}.js`);
-        const outPath = path.join(rootPath, opts.client || pkg['auth0-extension'].main);
+        const outPath = path.join(rootPath, opts.out || pkg['auth0-extension'].main);
 
         console.log('Assembling:', chalk.bold(`${pkg.name}@${pkg.version} extension assets`));
 
