@@ -100,7 +100,7 @@ prog
         return process.exit((result.errors && result.errors.length) || 1);
       });
   })
-  .command('assemble', 'Assemble assets for extension deployment')
+  .command('package', 'Package assets for extension deployment')
   .option('--client', 'Path of client side assets')
   .option('--bundle', 'Path to extensions bundle')
   .option('--out', 'Directory to copy build package')
@@ -123,7 +123,7 @@ prog
         const bundlePath = path.join(rootPath, opts.bundle || `./dist/${pkg.name}.extension.${pkg.version}.js`);
         const outPath = path.join(rootPath, opts.out || pkg['auth0-extension'].main);
 
-        console.log('Assembling:', chalk.bold(`${pkg.name}@${pkg.version} extension assets`));
+        console.log('Packaging:', chalk.bold(`${pkg.name}@${pkg.version} extension assets`));
 
         const zip = new AdmZip();
 
@@ -139,11 +139,11 @@ prog
 
         return zip.writeZip(zipName, (err) => {
           if (err) {
-            console.log('Error:', `Unable to assemble ${zipName}`);
+            console.log('Error:', `Unable to package ${zipName}`);
             return process.exit(1);
           }
 
-          console.log(`${zipName} assembled successfully`);
+          console.log(`${zipName} packaged successfully`);
           return process.exit(0);
         });
       });
