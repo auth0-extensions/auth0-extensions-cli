@@ -7,7 +7,7 @@ const path = require('path');
 const prog = require('caporal');
 const Webpack = require('webpack');
 const validator = require('webtask-json-validator');
-
+const AdmZip = require('adm-zip');
 
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
@@ -20,15 +20,12 @@ prog
   .argument('destinationFolder', 'Folder where to store the output of the build')
   .action((args) => {
     const rootPath = process.cwd();
-    Promise.all([json(path.join(rootPath, 'package.json')), json(path.join(rootPath, 'webtask.json'))])
-      .then((files) => {
-        const pkg = files[0];
-        const webtaskJson = files[1];
-
+    json(path.join(rootPath, 'package.json'))
+      .then((pkg) => {
         console.log('Building:', chalk.bold(`${pkg.name}@${pkg.version} extension`));
 
         getExternals(rootPath)
-          .then(externals => getConfig(pkg, webtaskJson, rootPath, args, externals))
+          .then(externals => getConfig(pkg, rootPath, args, externals))
           .then((config) => {
             Webpack(config).run((err, stats) => {
               if (err) {
@@ -101,6 +98,54 @@ prog
 
         console.log(`${packagePath} is invalid.`, result.errors);
         return process.exit((result.errors && result.errors.length) || 1);
+      });
+  })
+  .command('package', 'Package assets for extension deployment')
+  .option('--client', 'Path of client side assets')
+  .option('--bundle', 'Path to extensions bundle')
+  .option('--out', 'Directory to copy build package')
+  .action((args, opts) => {
+    const rootPath = process.cwd();
+    const packagePath = path.join(rootPath, 'package.json');
+
+    json(packagePath)
+      .then((pkg) => {
+        console.log(`Validating ${packagePath}`);
+
+        const result = validator.validate(pkg, true);
+
+        if (!result.isValid) {
+          console.log(`${packagePath} is invalid.`, result.errors);
+          return process.exit((result.errors && result.errors.length) || 1);
+        }
+
+        const clientPath = opts.client ? path.join(rootPath, opts.client) : null;
+        const bundlePath = path.join(rootPath, opts.bundle || `./dist/${pkg.name}.extension.${pkg.version}.js`);
+        const outPath = path.join(rootPath, opts.out || pkg['auth0-extension'].main);
+
+        console.log('Packaging:', chalk.bold(`${pkg.name}@${pkg.version} extension assets`));
+
+        const zip = new AdmZip();
+
+        zip.addLocalFile(packagePath);
+        zip.addLocalFile(bundlePath, '', 'extension.js');
+        if (clientPath) {
+          zip.addLocalFolder(clientPath, 'client', (filename) => {
+            return filename.endsWith('.js') || filename.endsWith('.css');
+          });
+        }
+
+        const zipName = path.join(outPath, `${pkg.name}-${pkg.version}-assets.zip`);
+
+        return zip.writeZip(zipName, (err) => {
+          if (err) {
+            console.log('Error:', `Unable to package ${zipName}`);
+            return process.exit(1);
+          }
+
+          console.log(`${zipName} packaged successfully`);
+          return process.exit(0);
+        });
       });
   });
 
