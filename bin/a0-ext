@@ -12,6 +12,7 @@ const AdmZip = require('adm-zip');
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 const getClientConfig = require('../lib/client-config');
+const deployExtension = require('../lib/deploy');
 
 prog
   .version('1.0.0')
@@ -146,6 +147,27 @@ prog
           console.log(`${zipName} packaged successfully`);
           return process.exit(0);
         });
+      });
+  })
+  .command('deploy', 'Package assets for extension deployment')
+  .option('--token', 'Access token')
+  .option('--package', 'Path to extension bundle')
+  .option('--url', 'URL to extension deploy endpoint')
+  .action((args, opts) => {
+    const rootPath = process.cwd();
+    const filePath = path.join(rootPath, opts.package || 'package.json');
+    const url = opts.url || 'http://0.0.0.0:3000/api/v1/extensions';
+    const token = opts.url || process.env.AUTH0_EXTENSIONS_TOKEN;
+
+    return deployExtension(url, token, filePath)
+      .then(() => {
+        console.log('Extension has been deployed successfully');
+        return process.exit(0);
+      })
+      .catch((err) => {
+        console.log('Deploy process failed');
+        console.log(err);
+        return process.exit(1);
       });
   });
 
