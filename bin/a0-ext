@@ -137,7 +137,7 @@ prog
           });
         }
 
-        const zipName = path.join(outPath, `${pkg.name}-${pkg.version}-assets.zip`);
+        const zipName = path.join(outPath, 'package.zip');
 
         return zip.writeZip(zipName, (err) => {
           if (err) {
@@ -156,7 +156,7 @@ prog
   .option('--url', 'URL to extension deploy endpoint')
   .action((args, opts) => {
     const rootPath = process.cwd();
-    const filePath = path.join(rootPath, opts.package || 'package.json');
+    const filePath = path.join(rootPath, opts.package || 'dist/package.zip');
     const url = opts.url || 'http://0.0.0.0:3000/api/v1/extensions';
     const token = opts.url || process.env.AUTH0_EXTENSIONS_TOKEN;
 
