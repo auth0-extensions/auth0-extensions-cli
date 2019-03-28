@@ -13,7 +13,6 @@ const AdmZip = require('adm-zip');
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
 const getClientConfig = require('../lib/client-config');
-const deployExtension = require('../lib/deploy');
 
 prog
   .version('1.0.0')
