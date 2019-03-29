@@ -2,7 +2,7 @@
 
 Command-line tool allowing you to build a Node.js backend as an Auth0 Extension
 
-> yarn add --dev auth0-extensions-cli
+> npm install --save-dev auth0-extensions-cli
 
 ## Usage
 
@@ -68,6 +68,14 @@ You can add an `auth0-extension` node to your `package.json` file to specify spe
   }
 }
 ```
+
+## Command Topics
+
+- `a0-ext validate` - Check extension`s package.json to contain all necessary information.
+- `a0-ext build:client` - Compile your React Frontend into an Auth0 Extension Client.
+- `a0-ext build:server` - Compile your Node.js Backend into an Auth0 Extension.
+- `a0-ext package` - Package assets for extension deployment.
+- `a0-ext deploy` - Deploy the extension to Auth0.
 
 ## Issue Reporting
 
