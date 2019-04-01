@@ -90,6 +90,12 @@ const defaultWebpackConfig = {
           NODE_ENV: '"production"'
         }
       }
+    },
+    {
+      options: {
+        banner: '"use strict";',
+        raw: true
+      }
     }
   ],
   resolve: {
@@ -112,6 +118,9 @@ describe('config', () => {
 
       expect(result.plugins[0].options.warningsFilter).to.be.a('function');
       delete result.plugins[0].options.warningsFilter;
+
+      expect(result.plugins[2].banner).to.be.a('function');
+      delete result.plugins[2].banner;
 
       expect(result).to.eql(defaultWebpackConfig);
     });
