@@ -55,7 +55,7 @@
     "webpack-dev-server": "^3.1.4",
     "webpack-serve": "^0.3.1",
     "webpack-stats-plugin": "^0.2.1",
-    "webtask-json-validator": "git@github.com:auth0/webtask-json-validator.git#4.0"
+    "webtask-json-validator": "~4.0.0"
   },
   "devDependencies": {
     "chai": "4.1.2",
