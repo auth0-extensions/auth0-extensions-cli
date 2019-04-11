@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  build_and_test:
     docker:
       # specify the version you desire here
       - image: node:carbon
@@ -17,9 +17,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
       # Need to fix downstream before we can stop ignoring engines
       - run: npm install
@@ -31,3 +31,9 @@ jobs:
 
       # run tests!
       - run: npm test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_and_test
