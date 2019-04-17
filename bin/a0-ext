@@ -189,12 +189,19 @@ prog
   .action((args, opts) => {
     const rootPath = process.cwd();
     const filePath = path.join(rootPath, opts.package || 'dist/package.zip');
-    const url = opts.url || 'http://0.0.0.0:3000/api/v1/extensions';
+    const url = opts.url || 'http://0.0.0.0:3000/api/extensions';
     const apiKey = opts.apiKey || process.env.AUTH0_EXTENSIONS_API_KEY;
+
+    if (!apiKey) {
+      console.error(
+        'An API key is required. Please set --apiKey flag or set the environment variable AUTH0_EXTENSIONS_API_KEY'
+      );
+      return process.exit(1);
+    }
 
     return request
       .post(url)
-      .set({ 'X-API-KEY': `${apiKey}` })
+      .set({ 'x-api-key': apiKey })
       .attach('package', filePath)
       .then(
         () => {
