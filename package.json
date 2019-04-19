@@ -1,6 +1,6 @@
 {
   "name": "auth0-extensions-cli",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Command-line tool allowing you to build a Node.js backend as an Auth0 Extension",
   "engines": {
     "node": ">=6.9.1"
