@@ -25,9 +25,12 @@ prog
     'destinationFolder',
     'Folder where to store the output of the build'
   )
-  .action(args => {
+  .option('--pkg', 'Path of package.json')
+  .action((args, opts) => {
     const rootPath = process.cwd();
-    json(path.join(rootPath, 'package.json')).then(pkg => {
+    const packagePath = path.join(rootPath, opts.pkg || 'package.json');
+
+    json(packagePath).then((pkg) => {
       console.log(
         'Building:',
         chalk.bold(`${pkg.name}@${pkg.version} extension`)
@@ -35,7 +38,7 @@ prog
 
       getExternals(rootPath)
         .then(externals => getConfig(pkg, rootPath, args, externals))
-        .then(config => {
+        .then((config) => {
           Webpack(config).run((err, stats) => {
             if (err) {
               console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
@@ -77,12 +80,15 @@ prog
   )
   .argument('entryPoint', 'Entry point for your extension')
   .argument('destinationFolder', 'Entry point for your extension')
-  .action(args => {
+  .option('--pkg', 'Path of package.json')
+  .action((args, opts) => {
     const rootPath = process.cwd();
     const entry = args.entryPoint || 'client/app.jsx';
     const destination = args.destinationFolder || 'dist';
     const mode = 'production';
-    json(path.join(rootPath, 'package.json')).then(pkg => {
+    const packagePath = path.join(rootPath, opts.pkg || 'package.json');
+
+    json(packagePath).then((pkg) => {
       console.log('Building:', chalk.bold(`${pkg.name}@${pkg.version} client`));
 
       Webpack(getClientConfig(pkg, rootPath, mode, entry, destination)).run(
@@ -107,12 +113,12 @@ prog
     'Check extension`s package.json to contain all necessary information'
   )
   .argument('entryPoint', 'Entry point for your extension')
-  .action(args => {
+  .action((args) => {
     const rootPath = process.cwd();
     const entry = args.entryPoint || 'package.json';
     const packagePath = path.join(rootPath, entry);
 
-    json(packagePath).then(pkg => {
+    json(packagePath).then((pkg) => {
       console.log(`Validating ${packagePath}`);
 
       const result = validator.validate(pkg, true);
@@ -127,14 +133,15 @@ prog
     });
   })
   .command('package', 'Package assets for extension deployment')
+  .option('--pkg', 'Path of package.json')
   .option('--client', 'Path of client side assets')
   .option('--bundle', 'Path to extensions bundle')
   .option('--out', 'Directory to copy build package')
   .action((args, opts) => {
     const rootPath = process.cwd();
-    const packagePath = path.join(rootPath, 'package.json');
+    const packagePath = path.join(rootPath, opts.pkg || 'package.json');
 
-    json(packagePath).then(pkg => {
+    json(packagePath).then((pkg) => {
       console.log(`Validating ${packagePath}`);
 
       const result = validator.validate(pkg, true);
@@ -164,14 +171,14 @@ prog
       zip.addLocalFile(packagePath);
       zip.addLocalFile(bundlePath, '', 'extension.js');
       if (clientPath) {
-        zip.addLocalFolder(clientPath, 'client', filename => {
-          return filename.endsWith('.js') || filename.endsWith('.css');
-        });
+        zip.addLocalFolder(clientPath,
+          'client',
+          filename => filename.endsWith('.js') || filename.endsWith('.css'));
       }
 
       const zipName = path.join(outPath, 'package.zip');
 
-      return zip.writeZip(zipName, err => {
+      return zip.writeZip(zipName, (err) => {
         if (err) {
           console.log('Error:', `Unable to package ${zipName}`);
           return process.exit(1);
@@ -208,7 +215,7 @@ prog
           console.log('Extension has been deployed successfully');
           return process.exit(0);
         },
-        err => {
+        (err) => {
           console.log('Deploy process failed');
           console.log((err.response && err.response.error) || err);
           return process.exit(1);
