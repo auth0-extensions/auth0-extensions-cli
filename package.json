@@ -14,7 +14,7 @@
     "a0-ext": "./bin/a0-ext"
   },
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha './test/**/*.test.js' --timeout 10000"
   },
   "dependencies": {
     "@babel/core": "^7.2.0",
