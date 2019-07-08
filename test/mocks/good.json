@@ -25,6 +25,7 @@
     },
     "externals": [
       "auth0",
+      "some-module",
       "webtask-tools"
     ],
     "excluded": [
