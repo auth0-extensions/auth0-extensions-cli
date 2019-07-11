@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/auth0-extensions/auth0-extensions-cli.svg?style=svg)](https://circleci.com/gh/auth0-extensions/auth0-extensions-cli)
+[![npm version](https://badge.fury.io/js/auth0-extensions-cli.svg)](https://badge.fury.io/js/auth0-extensions-cli)
+
 # Auth0 Extensions CLI
 
 Command-line tool allowing you to build a Node.js backend as an Auth0 Extension
