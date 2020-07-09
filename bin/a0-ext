@@ -25,7 +25,7 @@ prog
     'destinationFolder',
     'Folder where to store the output of the build'
   )
-  .option('--pkg', 'Path of package.json')
+  .option('--pkg <pkg>', 'Path of package.json')
   .action((args, opts) => {
     const rootPath = process.cwd();
     const packagePath = path.join(rootPath, opts.pkg || 'package.json');
@@ -80,7 +80,7 @@ prog
   )
   .argument('entryPoint', 'Entry point for your extension')
   .argument('destinationFolder', 'Entry point for your extension')
-  .option('--pkg', 'Path of package.json')
+  .option('--pkg <pkg>', 'Path of package.json')
   .action((args, opts) => {
     const rootPath = process.cwd();
     const entry = args.entryPoint || 'client/app.jsx';
@@ -133,10 +133,10 @@ prog
     });
   })
   .command('package', 'Package assets for extension deployment')
-  .option('--pkg', 'Path of package.json')
-  .option('--client', 'Path of client side assets')
-  .option('--bundle', 'Path to extensions bundle')
-  .option('--out', 'Directory to copy build package')
+  .option('--pkg <pkg>', 'Path of package.json')
+  .option('--client <client>', 'Path of client side assets')
+  .option('--bundle <bundle>', 'Path to extensions bundle')
+  .option('--out <out>', 'Directory to copy build package')
   .action((args, opts) => {
     const rootPath = process.cwd();
     const packagePath = path.join(rootPath, opts.pkg || 'package.json');
@@ -190,9 +190,9 @@ prog
     });
   })
   .command('deploy', 'Deploys the extension to Auth0.')
-  .option('--apiKey', 'API Key')
-  .option('--package', 'Path to extension bundle')
-  .option('--url', 'URL to extension deploy endpoint')
+  .option('--apiKey <apiKey>', 'API Key')
+  .option('--package <package>', 'Path to extension bundle')
+  .option('--url <url>', 'URL to extension deploy endpoint')
   .action((args, opts) => {
     const rootPath = process.cwd();
     const filePath = path.join(rootPath, opts.package || 'dist/package.zip');
