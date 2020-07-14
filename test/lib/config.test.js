@@ -21,8 +21,8 @@ const externals = {
 
 const defaultWebpackConfig = {
   entry: 'index.js',
-  externals: {},
   mode: 'none',
+  externals: {},
   module: {
     rules: [{
       test: /\.jsx?$/,
@@ -63,6 +63,8 @@ const defaultWebpackConfig = {
     {
       options: {
         cache: false,
+        cacheKeys: () => {},
+        minify: undefined,
         exclude: undefined,
         extractComments: false,
         include: undefined,
@@ -121,7 +123,6 @@ describe('config', () => {
 
       expect(result.plugins[2].banner).to.be.a('function');
       delete result.plugins[2].banner;
-
       expect(result).to.eql(defaultWebpackConfig);
     });
   });
