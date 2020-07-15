@@ -63,14 +63,10 @@ const defaultWebpackConfig = {
     {
       options: {
         cache: false,
-        cacheKeys: () => {},
-        minify: undefined,
-        exclude: undefined,
         extractComments: false,
-        include: undefined,
         parallel: false,
         sourceMap: false,
-        test: /\.js(\?.*)?$/i,
+        test: {},
         uglifyOptions: {
           compress: {
             dead_code: true,
@@ -123,7 +119,15 @@ describe('config', () => {
 
       expect(result.plugins[2].banner).to.be.a('function');
       delete result.plugins[2].banner;
-      expect(result).to.eql(defaultWebpackConfig);
+
+      expect(result.entry).to.deep.equal(defaultWebpackConfig.entry);
+      expect(result.mode).to.deep.equal(defaultWebpackConfig.mode);
+      expect(result.target).to.deep.equal(defaultWebpackConfig.target);
+      expect(result.output).to.deep.equal(defaultWebpackConfig.output);
+      expect(result.externals).to.deep.equal(defaultWebpackConfig.externals);
+      expect(result.module).to.deep.equal(defaultWebpackConfig.module);
+      expect(JSON.parse(JSON.stringify(result.plugins))).to.eql(defaultWebpackConfig.plugins);
+      expect(result.resolve).to.deep.equal(defaultWebpackConfig.resolve);
     });
   });
   describe('externals parsing', () => {
