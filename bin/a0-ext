@@ -4,14 +4,10 @@ const chalk = require('chalk');
 const json = require('load-json-file');
 const path = require('path');
 const prog = require('caporal');
-// const request = require('superagent');
 const Webpack = require('webpack');
-// const validator = require('webtask-json-validator');
-// const AdmZip = require('adm-zip');
 
 const getConfig = require('../lib/config');
 const getExternals = require('../lib/externals');
-// const getClientConfig = require('../lib/client-config');
 
 prog
   .version('1.0.0')
@@ -38,8 +34,6 @@ prog
       getExternals(rootPath)
         .then(externals => getConfig(pkg, rootPath, args, externals))
         .then((config) => {
-          // console.log({ config: JSON.stringify(config) });
-
           Webpack(config).run((err, stats) => {
             if (err) {
               console.log('Error:', chalk.bold(JSON.stringify(err, null, 2)));
