@@ -6,11 +6,7 @@ const { exec } = require('child_process');
 const TESTING_DIR = path.join(process.cwd(), 'testing');
 
 const prepareDirectory = (dir) => {
-  try {
-    fs.statSync(dir);
-  } catch (e) {
-    fs.mkdirSync(dir);
-  }
+  fs.mkdirSync(dir, { recursive: true });
 };
 
 describe('build:server', () => {
