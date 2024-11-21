@@ -1,6 +1,6 @@
-const some = require('some-module');
+const some = require("some-module");
 
 module.exports = (context, req, res) => {
-  const test = some('test string');
+  const test = some("test string");
   return res.send(test);
 };
