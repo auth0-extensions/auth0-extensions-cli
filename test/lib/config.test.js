@@ -21,7 +21,7 @@ const externals = {
 
 const defaultWebpackConfig = {
   entry: 'index.js',
-  mode: 'none',
+  mode: 'production',
   externals: {},
   module: {
     rules: [{
@@ -46,7 +46,13 @@ const defaultWebpackConfig = {
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-export-default-from',
             '@babel/plugin-proposal-export-namespace-from',
-            '@babel/plugin-transform-runtime',
+            [
+              '@babel/plugin-transform-runtime',
+              {
+                helpers: false,
+                regenerator: true
+              }
+            ],
             '@babel/plugin-syntax-dynamic-import'
           ]
         }
@@ -55,32 +61,33 @@ const defaultWebpackConfig = {
   },
   output: {
     filename: `${pkg.name}.extension.${pkg.version}.js`,
-    library: `${pkg.name}.extension`,
     libraryTarget: 'commonjs2',
     path: 'dist'
   },
-  plugins: [
-    {
-      options: {
-        cache: false,
-        extractComments: false,
-        parallel: false,
-        sourceMap: false,
-        test: {},
-        uglifyOptions: {
-          compress: {
-            dead_code: true,
-            unused: true,
-            warnings: false
-          },
-          ecma: 6,
-          output: {
-            comments: false
+  optimization: {
+    minimizer: [
+      {
+        options: {
+          extractComments: false,
+          parallel: true,
+          test: {},
+          minimizer: {
+            options: {
+              ecma: 6,
+              compress: {
+                unused: true,
+                dead_code: true
+              },
+              format: {
+                comments: false
+              }
+            }
           }
         }
-        // warningsFilter: () => { }
       }
-    },
+    ]
+  },
+  plugins: [
     {
       definitions: {
         'process.env': {
@@ -114,11 +121,8 @@ describe('config', () => {
       expect(result.module.rules[0].exclude).to.be.a('function');
       delete result.module.rules[0].exclude;
 
-      expect(result.plugins[0].options.warningsFilter).to.be.a('function');
-      delete result.plugins[0].options.warningsFilter;
-
-      expect(result.plugins[2].banner).to.be.a('function');
-      delete result.plugins[2].banner;
+      expect(result.plugins[1].banner).to.be.a('function');
+      delete result.plugins[1].banner;
 
       expect(result.entry).to.deep.equal(defaultWebpackConfig.entry);
       expect(result.mode).to.deep.equal(defaultWebpackConfig.mode);
@@ -127,6 +131,7 @@ describe('config', () => {
       expect(result.externals).to.deep.equal(defaultWebpackConfig.externals);
       expect(result.module).to.deep.equal(defaultWebpackConfig.module);
       expect(JSON.parse(JSON.stringify(result.plugins))).to.eql(defaultWebpackConfig.plugins);
+      expect(JSON.parse(JSON.stringify(result.optimization))).to.eql(defaultWebpackConfig.optimization);
       expect(result.resolve).to.deep.equal(defaultWebpackConfig.resolve);
     });
   });
@@ -208,7 +213,7 @@ describe('config', () => {
 
         it('properly configures uglify', () => {
           const result = config(targetPackage, rootPath, args, externals);
-          expect(result.plugins[0].options.uglifyOptions.ecma).to.eql(test.expectedEcma);
+          expect(result.optimization.minimizer[0].options.minimizer.options.ecma).to.eql(test.expectedEcma);
         });
       })
     );
