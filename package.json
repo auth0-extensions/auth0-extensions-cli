@@ -29,7 +29,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.2.0",
-    "adm-zip": "^0.4.13",
+    "adm-zip": "^0.6.0",
     "async": "^2.2.0",
     "babel-loader": "^8.0.4",
     "bluebird": "^3.5.0",
